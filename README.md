@@ -32,7 +32,7 @@ Uma aplicação web moderna que utiliza Inteligência Artificial para classifica
 
 ## 🚀 Demo Online
 
-**🌐 [Acesse a aplicação em produção](https://autou-case.onrender.com)**
+**🌐 [Acesse a aplicação em produção](https://autou-case-fey3.onrender.com/)**
 
 *A aplicação está hospedada no Render e pode levar alguns segundos para carregar na primeira visita.*
 
