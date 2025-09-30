@@ -1,0 +1,22 @@
+Prezados,
+
+Estou enfrentando dificuldades para acessar o sistema corporativo desde ontem à tarde. 
+
+Quando tento fazer login, recebo a mensagem de erro "Credenciais inválidas", mesmo tendo certeza de que estou usando a senha correta.
+
+Este problema está impactando minha produtividade, pois preciso acessar os relatórios financeiros para a reunião de amanhã.
+
+Poderiam me ajudar a resolver esta questão com urgência?
+
+Informações do sistema:
+- Usuário: joao.silva@empresa.com
+- Tentativas de login: 15:30, 16:45, 09:15 (hoje)
+- Navegador: Chrome versão 119
+- Sistema: Windows 10
+
+Aguardo retorno o mais breve possível.
+
+Atenciosamente,
+João Silva
+Departamento Financeiro
+Tel: (11) 9999-8888

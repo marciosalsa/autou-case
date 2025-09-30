@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoU - Classificador de Emails Inteligente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-gradient-primary text-white py-4 mb-5">
+        <div class="container-fluid px-4">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h1 class="display-6 fw-bold mb-2">
+                        <i class="fas fa-robot me-3"></i>
+                        AutoU Email Classifier
+                    </h1>
+                    <p class="lead mb-0">Inteligência Artificial para classificação automática de emails corporativos</p>
+                </div>
+                <div class="col-lg-4 text-lg-end text-center">
+                    <div class="badge bg-light text-dark fs-6 px-3 py-2">
+                        <i class="fas fa-brain me-2"></i>
+                        Powered by OpenAI
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="container">
+            <div class="row">
+                <!-- Main Panel -->
+                <div class="col-lg-8">
+                    <div class="card shadow-lg border-0 mb-4">
+                        <div class="card-header bg-white border-bottom-0 pt-4">
+                            <h3 class="card-title text-center mb-3">
+                                <i class="fas fa-upload me-2 text-primary"></i>
+                                Analisar Email
+                            </h3>
+                            <p class="text-muted text-center">
+                                Envie um arquivo (.txt ou .pdf) ou cole o texto do email para análise automática
+                            </p>
+                        </div>
+                        <div class="card-body p-4">
+                            <!-- Tabs -->
+                            <ul class="nav nav-pills nav-justified mb-4" id="emailTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="file-tab" data-bs-toggle="pill" data-bs-target="#file" type="button" role="tab">
+                                        <i class="fas fa-file-upload me-2"></i>
+                                        Enviar Arquivo
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="text-tab" data-bs-toggle="pill" data-bs-target="#text" type="button" role="tab">
+                                        <i class="fas fa-edit me-2"></i>
+                                        Inserir Texto
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <!-- Tab Content -->
+                            <div class="tab-content" id="emailTabContent">
+                                <!-- File Upload Tab -->
+                                <div class="tab-pane fade show active" id="file" role="tabpanel">
+                                    <form id="fileForm" enctype="multipart/form-data">
+                                        <div class="upload-area border-dashed border-2 border-primary rounded-3 p-5 text-center mb-3" 
+                                             ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
+                                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                            <h5>Arraste e solte seu arquivo aqui</h5>
+                                            <p class="text-muted mb-3">ou clique para selecionar</p>
+                                            <input type="file" class="form-control d-none" id="fileInput" name="file" accept=".txt,.pdf">
+                                            <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                                <i class="fas fa-folder-open me-2"></i>
+                                                Escolher Arquivo
+                                            </button>
+                                        </div>
+                                        <div class="file-info d-none mb-3">
+                                            <div class="alert alert-info d-flex align-items-center">
+                                                <i class="fas fa-file me-2"></i>
+                                                <span id="fileName"></span>
+                                                <button type="button" class="btn-close ms-auto" onclick="clearFile()"></button>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                                            <i class="fas fa-magic me-2"></i>
+                                            Analisar Email
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Insert Text Tab -->
+                                <div class="tab-pane fade" id="text" role="tabpanel">
+                                    <form id="textForm">
+                                        <div class="mb-3">
+                                            <label for="emailText" class="form-label fw-semibold">
+                                                <i class="fas fa-envelope me-2"></i>
+                                                Conteúdo do Email
+                                            </label>
+                                            <textarea class="form-control" id="emailText" name="email_text" rows="8" 
+                                                      placeholder="Cole aqui o texto completo do email que deseja analisar..."></textarea>
+                                            <div class="form-text">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                Mínimo de 10 caracteres
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                                            <i class="fas fa-magic me-2"></i>
+                                            Analisar Email
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results -->
+                    <div id="results" class="d-none">
+                        <div class="card shadow-lg border-0">
+                            <div class="card-header bg-white border-bottom-0 pt-4">
+                                <h3 class="card-title text-center">
+                                    <i class="fas fa-chart-line me-2 text-success"></i>
+                                    Resultado da Análise
+                                </h3>
+                            </div>
+                            <div class="card-body p-4">
+                                <!-- Classification -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="result-item">
+                                            <h5 class="mb-2">
+                                                <i class="fas fa-tag me-2"></i>
+                                                Classificação
+                                            </h5>
+                                            <div id="classificationBadge" class="badge fs-6 px-3 py-2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Suggested Response -->
+                                <div class="mb-4">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-reply me-2"></i>
+                                        Resposta Automática Sugerida
+                                    </h5>
+                                    <div class="response-box bg-light border rounded-3 p-3">
+                                        <p id="suggestedResponse" class="mb-0"></p>
+                                    </div>
+                                    <div class="text-end mt-2">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="copyResponse()">
+                                            <i class="fas fa-copy me-1"></i>
+                                            Copiar Resposta
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Statistics -->
+                                <div class="statistics-section">
+                                    <h6 class="mb-3 text-muted">
+                                        <i class="fas fa-chart-pie me-2"></i>
+                                        Estatísticas do Texto
+                                    </h6>
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="stat-item">
+                                                <div class="stat-number" id="charCount">0</div>
+                                                <div class="stat-label">Caracteres</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="stat-item">
+                                                <div class="stat-number" id="wordCount">0</div>
+                                                <div class="stat-label">Palavras</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-center mt-4">
+                                    <button class="btn btn-outline-secondary" onclick="analyzeAnother()">
+                                        <i class="fas fa-redo me-2"></i>
+                                        Analisar Outro Email
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- How It Works -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cogs me-2"></i>
+                                Como Funciona
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="timeline-number">1</div>
+                                    <div class="timeline-content">
+                                        <strong>Upload</strong><br>
+                                        Envie seu arquivo ou cole o texto
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-number">2</div>
+                                    <div class="timeline-content">
+                                        <strong>Processamento</strong><br>
+                                        IA analisa o conteúdo com NLP
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-number">3</div>
+                                    <div class="timeline-content">
+                                        <strong>Classificação</strong><br>
+                                        Determina se é produtivo ou não
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-number">4</div>
+                                    <div class="timeline-content">
+                                        <strong>Resposta</strong><br>
+                                        Gera sugestão automática
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2"></i>
+                                Categorias
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="category-item mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-success me-2">PRODUTIVO</span>
+                                </div>
+                                <small class="text-muted">
+                                    Emails que requerem ação: suporte técnico, dúvidas sobre sistemas, solicitações de informação, reclamações.
+                                </small>
+                            </div>
+                            <div class="category-item">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-secondary me-2">IMPRODUTIVO</span>
+                                </div>
+                                <small class="text-muted">
+                                    Emails sociais: felicitações, agradecimentos, mensagens sem ação necessária.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Examples -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                Exemplos de Uso
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="example-item mb-3">
+                                <button class="btn btn-outline-primary btn-sm w-100" onclick="loadExample('produtivo')">
+                                    <i class="fas fa-play me-2"></i>
+                                    Testar Email Produtivo
+                                </button>
+                            </div>
+                            <div class="example-item">
+                                <button class="btn btn-outline-secondary btn-sm w-100" onclick="loadExample('improdutivo')">
+                                    <i class="fas fa-play me-2"></i>
+                                    Testar Email Improdutivo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Modal -->
+        <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-body text-center p-5">
+                        <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+                        <h5>Analisando Email...</h5>
+                        <p class="text-muted mb-0">Nossa IA está processando o conteúdo</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Container -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="successToast" class="toast bg-success text-white" role="alert">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="toastMessage"></span>
+                </div>
+            </div>
+            <div id="errorToast" class="toast bg-danger text-white" role="alert">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container text-center">
+            <p class="mb-2">
+                <strong>AutoU Email Classifier</strong> - Solução inteligente para classificação de emails corporativos
+            </p>
+            <p class="mb-0 text-muted">
+                <i class="fas fa-code me-1"></i>
+                Desenvolvido com Flask, OpenAI GPT e amor pela tecnologia
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
