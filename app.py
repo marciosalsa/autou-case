@@ -22,7 +22,13 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 openai_api_key = os.getenv('OPENAI_API_KEY')
 if not openai_api_key:
     raise ValueError("OPENAI_API_KEY environment variable is required")
-client = OpenAI(api_key=openai_api_key)
+
+# Initialize OpenAI client with error handling
+try:
+    client = OpenAI(api_key=openai_api_key)
+except Exception as e:
+    print(f"Error initializing OpenAI client: {e}")
+    raise
 
 # Upload configurations
 UPLOAD_FOLDER = 'uploads'
