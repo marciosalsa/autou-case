@@ -1,4 +1,4 @@
-# AutoU Email Classifier 🤖📧
+# AutoU_Case (Email Classifier 🤖📧)
 
 > **Solução Inteligente para Classificação Automática de Emails Corporativos**
 
@@ -27,13 +27,12 @@ Uma aplicação web moderna que utiliza Inteligência Artificial para classifica
 - Drag & drop intuitivo
 
 ### 📊 **Análise Completa**
-- Estatísticas do texto processado
-- Indicadores de confiança
+- Estatísticas do texto 
 - Pré-processamento com NLP (NLTK)
 
 ## 🚀 Demo Online
 
-**🌐 [Acesse a aplicação em produção](https://autou-email-classifier.onrender.com)**
+**🌐 [Acesse a aplicação em produção](https://autou-case.onrender.com)**
 
 *A aplicação está hospedada no Render e pode levar alguns segundos para carregar na primeira visita.*
 
@@ -56,8 +55,8 @@ Uma aplicação web moderna que utiliza Inteligência Artificial para classifica
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/autou-email-classifier.git
-cd autou-email-classifier
+git clone https://github.com/marciosalsa/autou-case.git
+cd autou-case
 ```
 
 ### 2. Crie um ambiente virtual
@@ -129,11 +128,9 @@ Classifica um email e gera resposta automática.
 {
   "classification": "PRODUTIVO",
   "suggested_response": "Obrigado pelo seu contato...",
-  "confidence": "Alta",
   "stats": {
     "char_count": 150,
     "word_count": 25,
-    "processed_length": 20
   }
 }
 ```
@@ -150,7 +147,7 @@ Verifica o status da aplicação.
 - Normalização para minúsculas
 
 ### 2. **Classificação IA**
-- Envio do texto para OpenAI GPT-3.5-turbo
+- Envio do texto para OpenAI GPT-4o-mini
 - Prompt otimizado para classificação binária
 - Análise contextual do conteúdo
 - Retorno da categoria (PRODUTIVO/IMPRODUTIVO)
@@ -164,7 +161,7 @@ Verifica o status da aplicação.
 ## 📁 Estrutura do Projeto
 
 ```
-autou-email-classifier/
+autou-case/
 ├── app.py                 # Aplicação Flask principal
 ├── requirements.txt       # Dependências Python
 ├── .env                  # Variáveis de ambiente (não incluído no Git)
@@ -188,12 +185,6 @@ autou-email-classifier/
 - **Rate limiting**: Controle implícito via OpenAI
 - **Validação de conteúdo**: Mínimo de 10 caracteres
 
-### Boas Práticas
-- API keys em variáveis de ambiente
-- Arquivos temporários removidos após processamento
-- Validação client-side e server-side
-- Tratamento de erros robusto
-
 ## 🚀 Deploy na Nuvem
 
 ### Render (Recomendado)
@@ -203,7 +194,7 @@ autou-email-classifier/
 
 ### Heroku
 ```bash
-heroku create autou-email-classifier
+heroku create autou_case
 heroku config:set OPENAI_API_KEY=sua_chave_aqui
 git push heroku main
 ```
@@ -230,74 +221,18 @@ Parabéns pela excelente apresentação!
 Ótimo trabalho da equipe.
 ```
 
-### Validação Manual
-1. Teste com diferentes tipos de conteúdo
-2. Verifique a precisão das classificações
-3. Analise a qualidade das respostas geradas
-4. Teste upload de arquivos PDF e TXT
 
 ## 📈 Métricas e Monitoramento
-
-### Indicadores de Performance
-- **Tempo de resposta**: < 3 segundos (média)
-- **Precisão**: > 90% em emails corporativos típicos
-- **Disponibilidade**: 99% (monitorado via Render)
 
 ### Logs
 - Erros de classificação logados no console
 - Estatísticas de uso via Flask
 - Monitoramento de API calls OpenAI
 
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📞 Suporte
-
-### Problemas Comuns
-
-**Erro de API Key**:
-- Verifique se a chave está correta no `.env`
-- Confirme se há créditos na conta OpenAI
-
-**Erro de Upload**:
-- Confirme o formato do arquivo (.txt ou .pdf)
-- Verifique o tamanho (máx. 16MB)
-
-**Baixa Precisão**:
-- Use emails em português/inglês
-- Forneça contexto suficiente (>50 palavras)
-
 ### Contato
-- **Desenvolvedor**: [Seu Nome]
-- **Email**: seu.email@exemplo.com
-- **LinkedIn**: [seu-perfil-linkedin]
+- **Desenvolvedor**: [Marcio Salsa]
+- **Email**: marciosalsa@gmail.com
+- **LinkedIn**: [https://www.linkedin.com/in/marciosalsa/]
 
-## 📝 Licença
 
-Este projeto está licenciado sob a MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-## 🙏 Agradecimentos
-
-- **AutoU** pela oportunidade e desafio inspirador
-- **OpenAI** pela excelente API de IA
-- **Comunidade Python** pelas bibliotecas incríveis
-- **Bootstrap** pelo framework UI elegante
-
----
-
-## 🎥 Vídeo Demonstrativo
-
-**🎬 [Assista ao vídeo de demonstração](https://youtu.be/seu-video-aqui)**
-
-*Vídeo de 3-5 minutos mostrando todas as funcionalidades e explicação técnica.*
-
----
-
-⭐ **Se este projeto foi útil, considere dar uma estrela no GitHub!**
-
-**Desenvolvido com ❤️ para o processo seletivo AutoU 2024**
+**Desenvolvido com ❤️ para o processo seletivo AutoU 2025**
