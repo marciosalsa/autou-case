@@ -19,7 +19,10 @@ app.secret_key = 'autou-email-classifier-2024'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # OpenAI configuration
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+openai_api_key = os.getenv('OPENAI_API_KEY')
+if not openai_api_key:
+    raise ValueError("OPENAI_API_KEY environment variable is required")
+client = OpenAI(api_key=openai_api_key)
 
 # Upload configurations
 UPLOAD_FOLDER = 'uploads'
