@@ -72,7 +72,7 @@ venv\Scripts\activate
 
 ### 3. Instale as dependências
 ```bash
-pip install -r requirements.txt
+pip install -r assets/requirements.txt
 ```
 
 ### 4. Configure as variáveis de ambiente
@@ -163,16 +163,27 @@ Verifica o status da aplicação.
 ```
 autou-case/
 ├── app.py                 # Aplicação Flask principal
-├── requirements.txt       # Dependências Python
+├── assets/                # Recursos do projeto
+│   ├── requirements.txt   # Dependências Python
+│   ├── email_*.txt        # Exemplos de emails
+│   └── testeemailpdf.pdf  # Arquivo de teste PDF
+├── backend/               # Lógica de negócio (SOLID)
+│   ├── config/            # Configurações
+│   ├── controllers/       # Controladores
+│   ├── models/           # Modelos de dados
+│   ├── services/         # Serviços de negócio
+│   └── utils/            # Utilitários
+├── frontend/             # Interface do usuário
+│   ├── static/           # Arquivos estáticos
+│   │   ├── style.css     # Estilos personalizados
+│   │   └── script.js     # JavaScript interativo
+│   └── templates/        # Templates HTML
+│       └── index.html    # Página principal
 ├── .env                  # Variáveis de ambiente (não incluído no Git)
 ├── .gitignore           # Arquivos ignorados pelo Git
 ├── README.md            # Documentação do projeto
 ├── Procfile             # Configuração para deploy no Heroku/Render
-├── static/              # Arquivos estáticos
-│   ├── style.css        # Estilos personalizados
-│   └── script.js        # JavaScript interativo
-├── templates/           # Templates HTML
-│   └── index.html       # Página principal
+├── render.yaml          # Configuração para deploy no Render
 └── uploads/            # Diretório temporário para uploads
 ```
 
