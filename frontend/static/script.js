@@ -1,18 +1,13 @@
-// AutoU Email Classifier - JavaScript Functions
-
-// Global variables
 let loadingModal;
 let successToast;
 let errorToast;
 
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeComponents();
     setupEventListeners();
 });
 
 function initializeComponents() {
-    // Initialize Bootstrap components
     loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'), {
         keyboard: false,
         backdrop: 'static'
@@ -23,24 +18,20 @@ function initializeComponents() {
 }
 
 function setupEventListeners() {
-    // File form submission
     document.getElementById('fileForm').addEventListener('submit', function(e) {
         e.preventDefault();
         handleFileSubmission();
     });
     
-    // Text form submission
     document.getElementById('textForm').addEventListener('submit', function(e) {
         e.preventDefault();
         handleTextSubmission();
     });
     
-    // File input change
     document.getElementById('fileInput').addEventListener('change', function(e) {
         handleFileSelection(e.target.files[0]);
     });
     
-    // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         document.addEventListener(eventName, preventDefaults, false);
     });
@@ -51,7 +42,6 @@ function setupEventListeners() {
     }
 }
 
-// Drag and drop handlers
 function dragOverHandler(ev) {
     ev.preventDefault();
     ev.currentTarget.classList.add('drag-over');
@@ -75,7 +65,6 @@ function dropHandler(ev) {
 function handleFileSelection(file) {
     if (!file) return;
     
-    // Validate file type
     const allowedTypes = ['text/plain', 'application/pdf'];
     const allowedExtensions = ['.txt', '.pdf'];
     
@@ -87,18 +76,15 @@ function handleFileSelection(file) {
         return;
     }
     
-    // Validate file size (16MB max)
-    const maxSize = 16 * 1024 * 1024; // 16MB
+    const maxSize = 16 * 1024 * 1024;
     if (file.size > maxSize) {
         showError('Arquivo muito grande. Tamanho máximo: 16MB');
         return;
     }
     
-    // Update file info display
     document.getElementById('fileName').textContent = `${file.name} (${formatFileSize(file.size)})`;
     document.querySelector('.file-info').classList.remove('d-none');
     
-    // Set file in input
     const fileInput = document.getElementById('fileInput');
     const dataTransfer = new DataTransfer();
     dataTransfer.items.add(file);
@@ -132,18 +118,46 @@ function handleTextSubmission() {
         return;
     }
     
-    const formData = new FormData();
-    formData.append('email_text', emailText);
-    
-    submitToAPI(formData);
+    submitTextToAPI(emailText);
+}
+
+async function submitTextToAPI(emailText) {
+    try {
+        loadingModal.show();
+        
+        document.getElementById('results').classList.add('d-none');
+        
+        const response = await fetch('/classify-text', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                content: emailText
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Erro no servidor');
+        }
+        
+        loadingModal.hide();
+        
+        displayResults(data);
+        
+        showSuccess('Email analisado com sucesso!');
+        
+    } catch (error) {
+        loadingModal.hide();
+        showError(error.message || 'Erro ao processar o texto');
+    }
 }
 
 async function submitToAPI(formData) {
     try {
-        // Show loading modal
         loadingModal.show();
-        
-        // Hide previous results
         document.getElementById('results').classList.add('d-none');
         
         const response = await fetch('/upload', {
@@ -157,44 +171,32 @@ async function submitToAPI(formData) {
             throw new Error(data.error || 'Erro no servidor');
         }
         
-        // Hide loading modal
         loadingModal.hide();
-        
-        // Display results
         displayResults(data);
-        
-        // Show success message
-        showSuccess('Email analisado com sucesso!');
+        showSuccess('Arquivo processado com sucesso!');
         
     } catch (error) {
-        console.error('Error:', error);
         loadingModal.hide();
-        showError(error.message || 'Erro ao processar o email');
+        showError(error.message || 'Erro ao processar o arquivo');
     }
 }
 
 function displayResults(data) {
-    // Update classification badge
     const classificationBadge = document.getElementById('classificationBadge');
-    const classification = data.classification;
+    const classification = data.category;
     
     classificationBadge.textContent = classification;
     classificationBadge.className = 'badge fs-6 px-3 py-2 ' + 
         (classification === 'PRODUTIVO' ? 'bg-success' : 'bg-secondary');
     
-    // Update suggested response
     document.getElementById('suggestedResponse').textContent = data.suggested_response;
-    
-    // Update statistics
     document.getElementById('charCount').textContent = formatNumber(data.char_count || '0');
     document.getElementById('wordCount').textContent = formatNumber(data.word_count || '0');
     
-    // Show results with animation
     const resultsDiv = document.getElementById('results');
     resultsDiv.classList.remove('d-none');
     resultsDiv.classList.add('fade-in-up');
     
-    // Scroll to results
     setTimeout(() => {
         resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 300);
@@ -240,15 +242,10 @@ function fallbackCopyResponse(text) {
 }
 
 function analyzeAnother() {
-    // Hide results
     document.getElementById('results').classList.add('d-none');
-    
-    // Clear forms
     document.getElementById('fileForm').reset();
     document.getElementById('textForm').reset();
     clearFile();
-    
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -281,19 +278,12 @@ Maria Santos
 Gerente de Projetos`
     };
     
-    // Switch to text tab
     const textTab = document.getElementById('text-tab');
-    const textTabPane = document.getElementById('text');
-    
-    // Activate text tab
     textTab.click();
     
-    // Fill textarea with example
     setTimeout(() => {
         document.getElementById('emailText').value = examples[type];
         document.getElementById('emailText').focus();
-        
-        // Scroll to textarea
         document.getElementById('emailText').scrollIntoView({ 
             behavior: 'smooth', 
             block: 'center' 
@@ -322,59 +312,6 @@ function formatFileSize(bytes) {
 }
 
 function formatNumber(num) {
-    // Converter para número se for string
     const number = typeof num === 'string' ? parseInt(num) || 0 : num;
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
-
-// Utility function to validate email format (if needed)
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-// Add smooth scrolling to all internal links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Add loading states to buttons
-function addLoadingState(button) {
-    const originalText = button.innerHTML;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processando...';
-    button.disabled = true;
-    
-    return function removeLoadingState() {
-        button.innerHTML = originalText;
-        button.disabled = false;
-    };
-}
-
-// Performance monitoring
-window.addEventListener('load', function() {
-    if ('performance' in window && 'timing' in window.performance) {
-        const loadTime = window.performance.timing.loadEventEnd - window.performance.timing.navigationStart;
-        console.log(`Page loaded in ${loadTime}ms`);
-    }
-});
-
-// Service Worker registration (for PWA features if needed)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        // Commented out - uncomment if you want PWA features
-        // navigator.serviceWorker.register('/sw.js').then(function(registration) {
-        //     console.log('ServiceWorker registration successful');
-        // }).catch(function(err) {
-        //     console.log('ServiceWorker registration failed');
-        // });
-    });
 }
