@@ -3,8 +3,8 @@ services:
     name: autou-case
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt && python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
-    startCommand: gunicorn app_refactored:app --bind 0.0.0.0:$PORT
+    buildCommand: pip install -r assets/requirements.txt && python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
